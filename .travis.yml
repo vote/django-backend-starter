@@ -12,6 +12,7 @@ before_install:
   - sudo service docker restart
 
 install:
+  - docker pull python:3.9-buster
   - docker-compose build
 
 before_script:
