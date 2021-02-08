@@ -14,7 +14,7 @@ before_script:
 
 script:
   # Put test code here
-  - make mypy
+  - docker-compose exec server pipenv run mypy /app/
 
 notifications:
   email: false
