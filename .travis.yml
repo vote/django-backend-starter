@@ -10,7 +10,6 @@ before_install:
   - touch .env
 
 install:
-  - docker pull python:3.9-buster
   - docker-compose build
 
 before_script:
