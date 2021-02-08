@@ -2,14 +2,14 @@ dist: bionic
 language: python
 python:
   - "3.8"
-
+sudo: required
 services:
   - docker
 
 before_install:
   - touch .env
   - echo 'DOCKER_OPTS="--registry-mirror=https://mirror.gcr.io"' | sudo tee -a /etc/default/docker
-  - sudo restart docker
+  - sudo service docker restart
 
 install:
   - docker-compose build
