@@ -10,6 +10,7 @@ before_install:
   - touch .env
   - echo 'DOCKER_OPTS="${DOCKER_OPTS} --registry-mirror=https://mirror.gcr.io"' | sudo tee -a /etc/default/docker
   - sudo systemctl restart docker
+  - docker system info
 
 install:
   - docker pull python:3.9-buster
