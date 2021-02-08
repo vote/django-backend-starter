@@ -6,13 +6,10 @@ python:
 services:
   - docker
 
-env:
-  DOCKER_OPTS="${DOCKER_OPTS} --registry-mirror=https://mirror.gcr.io"
-
 before_install:
   - touch .env
-  - mkdir ~/.docker
-  - cat <<< $(jq '.+{"registry-mirrors":["https://mirror.gcr.io"]}' ~/.docker/config.json) > ~/.docker/config.json
+  - echo 'DOCKER_OPTS="--registry-mirror=https://mirror.gcr.io"' | sudo tee -a /etc/default/docker
+  - sudo restart docker
 
 install:
   - docker-compose build
