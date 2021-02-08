@@ -11,9 +11,10 @@ env:
 
 before_install:
   - touch .env
+  - mkdir ~/.docker
+  - cat <<< $(jq '.+{"registry-mirrors":["https://mirror.gcr.io"]}' ~/.docker/config.json) > ~/.docker/config.json
 
 install:
-  - cat <<< $(jq '.+{"registry-mirrors":["https://mirror.gcr.io"]}' ~/.docker/config.json) > ~/.docker/config.json
   - docker-compose build
 
 before_script:
