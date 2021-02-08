@@ -8,7 +8,9 @@ services:
 
 before_install:
   - touch .env
+  - sudo cat /etc/default/docker
   - echo 'DOCKER_OPTS="--registry-mirror=https://mirror.gcr.io"' | sudo tee -a /etc/default/docker
+  - sudo cat /etc/default/docker
   - sudo service docker restart
 
 install:
