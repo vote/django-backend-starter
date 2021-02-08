@@ -3,6 +3,12 @@ language: python
 python:
   - "3.8"
 
+services:
+  - docker
+
+env:
+  DOCKER_OPTS="${DOCKER_OPTS} --registry-mirror=https://mirror.gcr.io"
+
 before_install:
   - touch .env
 
