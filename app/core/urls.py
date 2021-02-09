@@ -1,5 +1,3 @@
-from typing import Callable
-
 from django.contrib import admin
 from django.urls import include, path
 

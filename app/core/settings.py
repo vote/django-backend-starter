@@ -10,7 +10,7 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/3.1/ref/settings/
 """
 import os
-from typing import Any, Dict, Optional
+from typing import Any, Optional
 
 import ddtrace
 import environs
@@ -85,7 +85,7 @@ THIRD_PARTY_APPS: list[str] = [
 ]
 
 FIRST_PARTY_APPS: list[str] = [
-    # "first_party_app",
+    "first_party_app",
 ]
 
 INSTALLED_APPS: list[str] = DEFAULT_APPS + THIRD_PARTY_APPS + FIRST_PARTY_APPS
@@ -114,7 +114,9 @@ MIDDLEWARE: list[str] = [
 TEMPLATES: list[dict[str, Any]] = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
-        "DIRS": ["templates",],
+        "DIRS": [
+            "templates",
+        ],
         "APP_DIRS": True,
         "OPTIONS": {
             "context_processors": [
@@ -141,19 +143,29 @@ DATABASES: dict[str, Any] = {
 #### END DATABASE SETUP
 
 
-#### PASSWORD SETUP
+#### AUTH SETUP
+
+AUTH_USER_MODEL = "first_party_app.User"
+
+# Password Setup
 # https://docs.djangoproject.com/en/3.1/ref/settings/#auth-password-validators
 
 AUTH_PASSWORD_VALIDATORS: list[dict[str, str]] = [
     {
         "NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator",
     },
-    {"NAME": "django.contrib.auth.password_validation.MinimumLengthValidator",},
-    {"NAME": "django.contrib.auth.password_validation.CommonPasswordValidator",},
-    {"NAME": "django.contrib.auth.password_validation.NumericPasswordValidator",},
+    {
+        "NAME": "django.contrib.auth.password_validation.MinimumLengthValidator",
+    },
+    {
+        "NAME": "django.contrib.auth.password_validation.CommonPasswordValidator",
+    },
+    {
+        "NAME": "django.contrib.auth.password_validation.NumericPasswordValidator",
+    },
 ]
 
-#### END PASSWORD SETUP
+#### END AUTH SETUP
 
 
 #### INTERNATIONALIZATION SETUP
@@ -194,7 +206,9 @@ LOGGING = {
     "version": 1,
     "disable_existing_loggers": False,
     "handlers": {
-        "console": {"class": "logging.StreamHandler",},
+        "console": {
+            "class": "logging.StreamHandler",
+        },
         "json": {"class": "logging.StreamHandler", "formatter": "json"},
     },
     "formatters": {
@@ -205,8 +219,14 @@ LOGGING = {
     },
     # INDIVIDUAL LOGGERS
     "loggers": {
-        "django": {"handlers": [LOGGING_HANDLER], "level": DJANGO_LOGGING_LEVEL,},
-        "ddtrace": {"handlers": [LOGGING_HANDLER], "level": DJANGO_LOGGING_LEVEL,},
+        "django": {
+            "handlers": [LOGGING_HANDLER],
+            "level": DJANGO_LOGGING_LEVEL,
+        },
+        "ddtrace": {
+            "handlers": [LOGGING_HANDLER],
+            "level": DJANGO_LOGGING_LEVEL,
+        },
         "common": {
             "handlers": [LOGGING_HANDLER],
             "level": DJANGO_LOGGING_LEVEL,
@@ -259,11 +279,11 @@ STATSD_TAGS: list[str] = [
 SENTRY_DSN = env.str("SENTRY_DSN", default="")
 if TAG and SENTRY_DSN:
     sentry_sdk.init(
-        dsn=SENTRY_DSN, # type: ignore
+        dsn=SENTRY_DSN,  # type: ignore
         integrations=[DjangoIntegration(), RedisIntegration(), CeleryIntegration()],
         send_default_pii=True,
         release=f"django@{TAG}",
-        environment=ENV, # type: ignore
+        environment=ENV,  # type: ignore
     )
 
     with sentry_sdk.configure_scope() as scope:
