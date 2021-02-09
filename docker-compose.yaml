@@ -88,6 +88,19 @@ services:
       - redis
       - beat
 
+  client:
+    build:
+      context: .
+      dockerfile: Dockerfile-dev
+    command: npm run develop
+    volumes:
+      - ./app:/app
+      - /app/node_modules
+    ports:
+      - "35729:35729"
+    env_file:
+      - .env
+
   echo:
     build:
       context: .

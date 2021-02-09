@@ -1,16 +1,16 @@
 FROM python:3.9-buster
 
-ENV APP_DIR=/app
-WORKDIR $APP_DIR
-
 RUN curl -sL https://deb.nodesource.com/setup_12.x | bash - && \
     apt-get update && \
     apt-get install -y nodejs && \
     pip install pipenv==2020.11.15 && \
     apt-get clean
 
-#COPY app/package.json app/package-lock.json $APP_DIR/
-#RUN npm install
+ENV APP_DIR=/app
+WORKDIR $APP_DIR
+
+COPY app/package.json app/package-lock.json $APP_DIR/
+RUN npm install
 
 COPY app/Pipfile app/Pipfile.lock $APP_DIR/
 RUN pipenv install
