@@ -15,6 +15,7 @@ from typing import Any, Optional
 import ddtrace
 import environs
 import sentry_sdk
+from celery.schedules import crontab
 from sentry_sdk.integrations.celery import CeleryIntegration
 from sentry_sdk.integrations.django import DjangoIntegration
 from sentry_sdk.integrations.redis import RedisIntegration
@@ -61,7 +62,12 @@ CELERY_TASK_DEFAULT_QUEUE = "default"
 
 # CELERY BEAT SCHEDULE
 
-CELERY_BEAT_SCHEDULE: Any = {}
+CELERY_BEAT_SCHEDULE: Any = {
+    "update-user-cache-count": {
+        "task": "first_party_app.tasks.cache_user_count",
+        "schedule": crontab(minute=f"*/5"),
+    },
+}
 
 #### END CELERY & CELERY BEAT SETUP
 
