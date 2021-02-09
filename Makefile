@@ -16,6 +16,9 @@ clean:
 mypy:
 	docker-compose exec server pipenv run mypy /app/
 
+pytest:
+	docker-compose exec server pipenv pytest -n 2 /app/
+
 migrate:
 	docker-compose exec server pipenv run /app/manage.py migrate
 

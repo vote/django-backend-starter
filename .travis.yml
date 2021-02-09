@@ -16,7 +16,7 @@ before_script:
   - docker-compose up -d
 
 script:
-  # Put test code here
+  - docker-compose exec server pipenv run pytest -n 2 /app/
   - docker-compose exec server pipenv run mypy /app/
 
 notifications:
