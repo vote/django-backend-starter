@@ -3,7 +3,7 @@ from enum import EnumMeta
 from enumfields import Enum
 
 
-class PoliticalParties(Enum, metaclass=EnumMeta):
+class PoliticalParty(Enum, metaclass=EnumMeta):
     NONE = "None"
     DEMOCRATIC = "Dem"
     REPUBLICAN = "GOP"

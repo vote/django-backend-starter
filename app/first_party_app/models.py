@@ -2,6 +2,8 @@ from django.contrib.auth import models as auth_models
 from django.db import models
 from django.utils.translation import gettext_lazy as _
 
+from common.enums import PoliticalParty
+from common.fields import EnumField
 from common.utils.models import TimestampModel, UUIDModel
 
 
@@ -15,6 +17,8 @@ class User(
     is_active = models.BooleanField(_("Active"), default=True)
 
     email = models.EmailField(_("Email Address"), editable=False, unique=True)
+
+    political_party = EnumField(PoliticalParty, default=PoliticalParty.DEMOCRATIC)
 
     USERNAME_FIELD = "email"
 
