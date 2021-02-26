@@ -1,0 +1,23 @@
+dist: bionic
+language: python
+python:
+  - "3.8"
+
+services:
+  - docker
+
+before_install:
+  - touch .env
+
+install:
+  - docker-compose build
+
+before_script:
+  - docker-compose up -d
+
+script:
+  - docker-compose exec server pipenv run pytest -n 2 /app/
+  - docker-compose exec server pipenv run mypy /app/
+
+notifications:
+  email: false

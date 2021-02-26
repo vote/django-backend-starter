@@ -1,0 +1,116 @@
+version: '3.7'
+services:
+  postgres:
+    container_name: postgres_django
+    image: postgis/postgis:11-2.5
+    environment:
+      - POSTGRES_DB=django
+      - POSTGRES_PASSWORD=django
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata_django:/var/lib/postgresql/data
+
+  redis:
+    container_name: redis_django
+    image: 'redis:5.0.5'
+    ports:
+      - "127.0.0.1:6379:6379"
+    volumes:
+      - redisdata_django:/data
+
+  server:
+    build:
+      context: .
+      dockerfile: Dockerfile-dev
+    entrypoint: wait-for-it -t 45 postgres:5432 redis:6379 --
+    command: pipenv run /app/manage.py runserver 0.0.0.0:8000
+    volumes:
+      - ./app:/app:cached
+    ports:
+      - "8000:8000"
+    environment:
+      - SECRET_KEY=abcd
+      - DATABASE_URL=postgres://postgres:django@postgres:5432/django
+      - REDIS_URL=redis://redis:6379
+      - ALLOWED_HOSTS=*
+      - DEBUG=True
+      - DD_AGENT_HOST=echo
+      - DD_DOGSTATSD_PORT=3333
+    env_file:
+      - .env
+    depends_on:
+      - postgres
+      - redis
+
+  beat:
+    build:
+      context: .
+      dockerfile: Dockerfile-dev
+    entrypoint: wait-for-it -t 45 postgres:5432 redis:6379 --
+    command: pipenv run watchmedo auto-restart --directory /app/ --pattern=*.py --recursive -- pipenv run celery -A core.celery_beat beat --scheduler redbeat.RedBeatScheduler
+    volumes:
+      - ./app:/app
+    environment:
+      - SECRET_KEY=abcd
+      - DATABASE_URL=postgres://postgres:django@postgres:5432/django
+      - REDIS_URL=redis://redis:6379
+      - ALLOWED_HOSTS=*
+      - DEBUG=True
+      - DD_AGENT_HOST=echo
+      - DD_DOGSTATSD_PORT=3333
+    env_file:
+      - .env
+    depends_on:
+      - postgres
+      - redis
+
+  worker:
+    build:
+      context: .
+      dockerfile: Dockerfile-dev
+    entrypoint: wait-for-it -t 45 postgres:5432 redis:6379 --
+    command: pipenv run watchmedo auto-restart --directory /app/ --patterns=*.py --recursive -- pipenv run celery -A core.celery_app worker -Q default
+    volumes:
+      - ./app:/app
+    environment:
+      - SECRET_KEY=abcd
+      - DATABASE_URL=postgres://postgres:django@postgres:5432/django
+      - REDIS_URL=redis://redis:6379
+      - ALLOWED_HOSTS=*
+      - DEBUG=True
+      - DD_AGENT_HOST=echo
+      - DD_DOGSTATSD_PORT=3333
+    env_file:
+      - .env
+    depends_on:
+      - postgres
+      - redis
+      - beat
+
+  client:
+    build:
+      context: .
+      dockerfile: Dockerfile-dev
+    command: npm run develop
+    volumes:
+      - ./app:/app
+      - /app/node_modules
+    ports:
+      - "35729:35729"
+    env_file:
+      - .env
+
+  echo:
+    build:
+      context: .
+      dockerfile: Dockerfile-dev-echo
+    command: python -m echo
+    volumes:
+      - ./app/echo.py:/app/echo.py
+    ports:
+      - "3333:3333"
+
+volumes:
+  pgdata_django:
+  redisdata_django:
