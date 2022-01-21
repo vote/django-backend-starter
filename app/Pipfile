@@ -29,7 +29,7 @@ django-enumfields = "==2.0.*"
 dj-database-url = "==0.5.*"
 
 [dev-packages]
-ipython = "==7.10.*"
+ipython = "==7.16.*"
 pytest-django = "==4.1.*"
 pytest-xdist = "==2.2.*"
 django-stubs = "==1.7.*"
