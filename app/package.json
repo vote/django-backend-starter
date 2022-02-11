@@ -8,7 +8,7 @@
     "autoprefixer": "^9.7.3",
     "css-loader": "^3.3.2",
     "exports-loader": "^0.7.0",
-    "node-sass": "^4.14.1",
+    "node-sass": "^7.0.0",
     "postcss-loader": "^3.0.0",
     "sass-loader": "^8.0.2",
     "style-loader": "^1.0.1",
